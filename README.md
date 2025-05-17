@@ -39,4 +39,4 @@ MIT License
 
 ## 💖 Acknowledgements
 
-* 📖 Research Source: Gu, Y., Lin, T., & Sato, H. (2025). Effects of 100 Hz Pure Tone on Vestibular Function for Motion Sickness Relief. *Environmental Health and Preventive Medicine*, 30(0), 24-00247. [Link to Paper](https://www.jstage.jst.go.jp/article/ehpm/30/0/30_24-00247/_article)
+* 📖 Research Source: https://www.jstage.jst.go.jp/article/ehpm/30/0/30_24-00247/_article
