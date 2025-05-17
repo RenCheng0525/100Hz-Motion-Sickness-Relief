@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>100Hz Motion Sickness Relief</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        /* Root variables for consistent styling */
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2ecc71;
+            --secondary-dark: #27ae60;
+            --danger-color: #e74c3c;
+            --danger-dark: #c0392b;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #2c3e50;
+            --text-light: #7f8c8d;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        /* Main container */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin: 0 auto;
+        }
+
+        /* Header section */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        /* Language selector - moved to bottom of container */
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .language-btn {
+            background: none;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 8px 20px;
+            margin: 0 8px;
+            border-radius: 20px;
+            transition: var(--transition);
+            min-width: 60px;
+        }
+        
+        .language-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .language-btn.active {
+            color: white;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Information card */
+        .info-card {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .info-card p {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .info-card ul {
+            font-size: 0.9rem;
+            margin-left: 20px;
+            margin-bottom: 0;
+        }
+        
+        .info-card a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .info-card a:hover, .info-card a:active {
+            text-decoration: underline;
+        }
+
+        /* Button controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 32px;
+            gap: 16px;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            color: white;
+            gap: 8px;
+            min-width: 130px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 48px; /* Fixed height for better touch targets */
+        }
+
+        #playButton {
+            background-color: var(--secondary-color);
+        }
+
+        #playButton:hover, #playButton:active {
+            background-color: var(--secondary-dark);
+        }
+
+        #stopButton {
+            background-color: var(--danger-color);
+        }
+
+        #stopButton:hover, #stopButton:active {
+            background-color: var(--danger-dark);
+        }
+
+        /* Slider controls */
+        .control-group {
+            margin-bottom: 32px; /* Increased for better spacing on mobile */
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .slider-label label {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .value-display {
+            font-weight: 600;
+            color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .recommended {
+            position: relative;
+        }
+
+        .recommended::after {
+            content: attr(data-recommended);
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        /* Custom slider styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px; /* Increased height for better touch targets */
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px; /* Increased size for better touch targets */
+            height: 24px; /* Increased size for better touch targets */
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px; /* Increased size for better touch targets */
+            height: 24px; /* Increased size for better touch targets */
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover, 
+        input[type="range"]::-webkit-slider-thumb:active {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        input[type="range"]::-moz-range-thumb:hover,
+        input[type="range"]::-moz-range-thumb:active {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+
+        /* Timer display */
+        .timer-display {
+            text-align: center;
+            padding: 16px;
+            background-color: rgba(52, 152, 219, 0.1);
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        #remainingTime {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Wave animation for visual feedback */
+        .wave-animation {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 24px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0) scaleY(1); }
+            25% { transform: translateX(-25%) scaleY(0.5); }
+            50% { transform: translateX(-50%) scaleY(1); }
+            75% { transform: translateX(-75%) scaleY(1.5); }
+            100% { transform: translateX(-100%) scaleY(1); }
+        }
+
+        .wave {
+            position: absolute;
+            height: 100%;
+            width: 200%;
+            background: linear-gradient(90deg, 
+                rgba(52, 152, 219, 0) 0%, 
+                rgba(52, 152, 219, 0.2) 25%,
+                rgba(52, 152, 219, 0.4) 50%, 
+                rgba(52, 152, 219, 0.2) 75%, 
+                rgba(52, 152, 219, 0) 100%);
+            background-repeat: repeat-x;
+            background-size: 50% 100%;
+            animation: wave 2s linear infinite;
+            display: none;
+        }
+
+        .wave.active {
+            display: block;
+        }
+
+        /* Responsive styles for mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+                border-radius: 8px; /* Smaller radius on mobile */
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            button {
+                width: 100%;
+                height: 54px; /* Even bigger on mobile */
+            }
+            
+            .language-btn {
+                padding: 10px 16px;
+            }
+            
+            .slider-label label, .slider-label .value-display {
+                font-size: 1rem; /* Larger text on mobile */
+            }
+            
+            input[type="range"] {
+                height: 12px; /* Even bigger on mobile */
+            }
+            
+            input[type="range"]::-webkit-slider-thumb,
+            input[type="range"]::-moz-range-thumb {
+                width: 28px; /* Even bigger on mobile */
+                height: 28px; /* Even bigger on mobile */
+            }
+        }
+        
+        /* Special iPhone fixes */
+        @supports (-webkit-touch-callout: none) {
+            input[type="range"] {
+                background: #e0e0e0;
+            }
+            
+            button, .language-btn {
+                -webkit-touch-callout: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 data-en="100Hz Motion Sickness Relief" data-zh="100Hz 暈動症緩解器">100Hz Motion Sickness Relief</h1>
+            <p class="subtitle" data-en="Research-based tone generator for motion sickness prevention" data-zh="基於研究的暈動症預防音頻生成器">Research-based tone generator for motion sickness prevention</p>
+        </div>
+        
+        <div class="info-card">
+            <h3 data-en="How It Works" data-zh="工作原理">How It Works</h3>
+            <p data-en="Research from Nagoya University (<a href='https://www.jstage.jst.go.jp/article/ehpm/30/0/30_24-00247/_article' target='_blank'>Gu, Y. et al., 2025</a>) shows that brief exposure to a 100Hz pure tone may reduce motion sickness symptoms by improving vestibular function in the inner ear." data-zh="名古屋大學的研究 (<a href='https://www.jstage.jst.go.jp/article/ehpm/30/0/30_24-00247/_article' target='_blank'>Gu, Y. et al., 2025</a>) 表明，短時間接觸100Hz純音可通過改善內耳前庭功能來減輕暈動症狀。">Research from Nagoya University (<a href='https://www.jstage.jst.go.jp/article/ehpm/30/0/30_24-00247/_article' target='_blank'>Gu, Y. et al., 2025</a>) shows that brief exposure to a 100Hz pure tone may reduce motion sickness symptoms by improving vestibular function in the inner ear.</p>
+            <p data-en="Recommended use:" data-zh="推薦使用方法：">Recommended use:</p>
+            <ul>
+                <li data-en="Listen for 1 minute before travel" data-zh="在旅行前聆聽1分鐘">Listen for 1 minute before travel</li>
+                <li data-en="Use the recommended volume setting (65 dBA)" data-zh="使用推薦音量設置(65 dBA)">Use the recommended volume setting (65 dBA)</li>
+                <li data-en="Effects may last up to 2 hours" data-zh="效果可持續長達2小時">Effects may last up to 2 hours</li>
+            </ul>
+        </div>
+        
+        <div class="wave-animation">
+            <div class="wave" id="waveAnimation"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="playButton" data-en-play="<i class='fas fa-play'></i> Play" data-zh-play="<i class='fas fa-play'></i> 播放" data-en-pause="<i class='fas fa-pause'></i> Pause" data-zh-pause="<i class='fas fa-pause'></i> 暫停"><i class="fas fa-play"></i> Play</button>
+            <button id="stopButton" data-en="<i class='fas fa-stop'></i> Stop" data-zh="<i class='fas fa-stop'></i> 停止"><i class="fas fa-stop"></i> Stop</button>
+        </div>
+        
+        <div class="control-group">
+            <div class="slider-container">
+                <div class="slider-label">
+                    <label for="volumeSlider" data-en="Volume" data-zh="音量">Volume</label>
+                    <span class="value-display recommended" id="volumeValue" data-en-recommended="✓ Recommended" data-zh-recommended="✓ 推薦" data-recommended="✓ Recommended">65%</span>
+                </div>
+                <input type="range" id="volumeSlider" min="0" max="100" value="65">
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <div class="slider-container">
+                <div class="slider-label">
+                    <label for="durationSlider" data-en="Duration" data-zh="持續時間">Duration</label>
+                    <span class="value-display recommended" id="durationValue" data-en-recommended="✓ Recommended" data-zh-recommended="✓ 推薦" data-recommended="✓ Recommended">60s</span>
+                </div>
+                <input type="range" id="durationSlider" min="1" max="300" value="60">
+            </div>
+        </div>
+        
+        <div class="timer-display">
+            <div class="timer-label" data-en="Remaining Time" data-zh="剩餘時間">Remaining Time</div>
+            <div id="remainingTime">60s</div>
+        </div>
+        
+        <div class="language-selector">
+            <button class="language-btn active" data-lang="en">English</button>
+            <button class="language-btn" data-lang="zh">中文</button>
+        </div>
+    </div>
+
+    <script>
+        // Language control
+        const currentLang = 'en'; // Default language
+        const langButtons = document.querySelectorAll('.language-btn');
+        
+        // Set language function
+        function setLanguage(lang) {
+            // Update active button
+            langButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            
+            // Update all text elements with data-lang attributes
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                const attr = 'data-' + lang;
+                if (el.hasAttribute(attr)) {
+                    el.innerHTML = el.getAttribute(attr);
+                }
+            });
+            
+            // Update elements with innerHTML
+            document.querySelectorAll('[data-' + lang + '-play]').forEach(el => {
+                if (!isPlaying) {
+                    el.innerHTML = el.getAttribute('data-' + lang + '-play');
+                } else {
+                    el.innerHTML = el.getAttribute('data-' + lang + '-pause');
+                }
+            });
+            
+            document.querySelectorAll('[data-' + lang + ']').forEach(el => {
+                if (el.nodeName === 'BUTTON' && el.id !== 'playButton') {
+                    el.innerHTML = el.getAttribute('data-' + lang);
+                }
+            });
+            
+            // Update recommendations text
+            document.querySelectorAll('.recommended').forEach(el => {
+                el.setAttribute('data-recommended', el.getAttribute('data-' + lang + '-recommended'));
+            });
+        }
+        
+        // Language button click handlers
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                setLanguage(this.dataset.lang);
+            });
+        });
+        
+        // Audio context and related variables
+        let audioContext = null;
+        let oscillator = null;
+        let gainNode = null;
+        let timerInterval = null;
+        let remainingTimeInSeconds = 60;
+        let isPlaying = false;
+        
+        // Get DOM elements
+        const playButton = document.getElementById('playButton');
+        const stopButton = document.getElementById('stopButton');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValue = document.getElementById('volumeValue');
+        const durationSlider = document.getElementById('durationSlider');
+        const durationValue = document.getElementById('durationValue');
+        const remainingTime = document.getElementById('remainingTime');
+        const waveAnimation = document.getElementById('waveAnimation');
+        
+        // Initialize volume slider - default to 65% based on research
+        volumeSlider.value = 65;
+        volumeValue.textContent = "65%";
+        volumeSlider.addEventListener('input', updateVolumeValue);
+        
+        // Update volume value display and adjust audio if playing
+        function updateVolumeValue() {
+            const value = volumeSlider.value;
+            volumeValue.textContent = value + '%';
+            
+            // Update gain if audio is currently playing
+            if (gainNode) {
+                gainNode.gain.value = value / 100;
+            }
+            
+            // Add/remove recommended class based on value
+            if (value >= 63 && value <= 67) {
+                volumeValue.classList.add('recommended');
+                const lang = document.querySelector('.language-btn.active').dataset.lang;
+                volumeValue.setAttribute('data-recommended', volumeValue.getAttribute('data-' + lang + '-recommended'));
+            } else {
+                volumeValue.classList.remove('recommended');
+                volumeValue.removeAttribute('data-recommended');
+            }
+        }
+        
+        // Initialize duration slider - default to 60s (1 minute) based on research
+        durationSlider.value = 60;
+        durationValue.textContent = "60s";
+        remainingTimeInSeconds = 60;
+        remainingTime.textContent = "60s";
+        durationSlider.addEventListener('input', updateDurationValue);
+        
+        // Update duration value display and reset timer
+        function updateDurationValue() {
+            const value = durationSlider.value;
+            durationValue.textContent = value + 's';
+            remainingTimeInSeconds = value;
+            remainingTime.textContent = value + 's';
+            
+            // Add/remove recommended class based on value
+            if (value >= 55 && value <= 65) {
+                durationValue.classList.add('recommended');
+                const lang = document.querySelector('.language-btn.active').dataset.lang;
+                durationValue.setAttribute('data-recommended', durationValue.getAttribute('data-' + lang + '-recommended'));
+            } else {
+                durationValue.classList.remove('recommended');
+                durationValue.removeAttribute('data-recommended');
+            }
+        }
+        
+        // Handle device orientation change for responsive layout
+        window.addEventListener('orientationchange', function() {
+            // Wait for orientation change to complete
+            setTimeout(function() {
+                // Adjust UI for small screens if needed
+                updateLayoutForOrientation();
+            }, 200);
+        });
+        
+        function updateLayoutForOrientation() {
+            // Any specific adjustments needed for orientation changes
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Force redraw to fix iOS rendering bugs
+            document.body.style.display = 'none';
+            setTimeout(function() {
+                document.body.style.display = '';
+            }, 0);
+        }
+        
+        // Prevent screen dimming on mobile when playing sound
+        let wakeLock = null;
+        async function keepScreenAwake(enable) {
+            if ('wakeLock' in navigator) {
+                try {
+                    if (enable) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                    } else if (wakeLock) {
+                        await wakeLock.release();
+                        wakeLock = null;
+                    }
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
+                }
+            }
+        }
+        
+        // Play/Pause button click handler
+        playButton.addEventListener('click', function() {
+            // If already playing, stop the sound
+            if (isPlaying) {
+                stopSound();
+                return;
+            }
+            
+            // Prevent multiple initializations
+            if (isPlaying) return;
+            isPlaying = true;
+            
+            // Update UI to show playing state
+            const lang = document.querySelector('.language-btn.active').dataset.lang;
+            playButton.innerHTML = playButton.getAttribute('data-' + lang + '-pause');
+            waveAnimation.classList.add('active');
+            
+            try {
+                // Initialize Web Audio API with iOS unlock workaround
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // iOS audio unlock
+                    if (audioContext.state === 'suspended') {
+                        const unlockAudio = function() {
+                            audioContext.resume().then(() => {
+                                document.body.removeEventListener('touchstart', unlockAudio);
+                                document.body.removeEventListener('touchend', unlockAudio);
+                                document.body.removeEventListener('click', unlockAudio);
+                            });
+                        };
+                        document.body.addEventListener('touchstart', unlockAudio, false);
+                        document.body.addEventListener('touchend', unlockAudio, false);
+                        document.body.addEventListener('click', unlockAudio, false);
+                    }
+                }
+                
+                // Create oscillator for 100Hz tone (exact frequency from research)
+                oscillator = audioContext.createOscillator();
+                oscillator.type = 'sine'; // Pure sine wave for clean tone
+                oscillator.frequency.setValueAtTime(100, audioContext.currentTime); // 100Hz exactly
+                
+                // Create gain node for volume control
+                gainNode = audioContext.createGain();
+                gainNode.gain.value = volumeSlider.value / 100;
+                
+                // Connect audio nodes
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Start generating the tone
+                oscillator.start();
+                
+                // Add vibration feedback on start
+                vibrateDevice(50);
+                
+                // Keep mobile screen awake
+                keepScreenAwake(true);
+                
+                // Start countdown timer
+                remainingTimeInSeconds = parseInt(durationSlider.value);
+                updateRemainingTime();
+                timerInterval = setInterval(updateRemainingTime, 1000);
+            } catch (error) {
+                // Handle audio initialization errors
+                console.error('Error initializing audio:', error);
+                isPlaying = false;
+                
+                const lang = document.querySelector('.language-btn.active').dataset.lang;
+                playButton.innerHTML = playButton.getAttribute('data-' + lang + '-play');
+                waveAnimation.classList.remove('active');
+                
+                // Show user-friendly error message
+                const errorMsg = lang === 'en' ? 
+                    'Unable to start audio. Please ensure your device supports Web Audio API and try again.' : 
+                    '無法啟動音頻。請確保您的設備支持Web Audio API並重試。';
+                alert(errorMsg);
+            }
+        });
+        
+        // Stop button click handler
+        stopButton.addEventListener('click', stopSound);
+        
+        // Stop sound and reset UI
+        function stopSound() {
+            // Stop audio oscillator
+            if (oscillator) {
+                oscillator.stop();
+                oscillator = null;
+            }
+            
+            // Clean up audio context
+            if (audioContext) {
+                // No need to close the context, just disconnect nodes
+                if (gainNode) {
+                    gainNode.disconnect();
+                }
+            }
+            
+            // Reset gain node
+            gainNode = null;
+            
+            // Add vibration feedback on stop
+            vibrateDevice([50, 50, 50]);
+            
+            // Stop timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            // Reset UI to initial state
+            isPlaying = false;
+            const lang = document.querySelector('.language-btn.active').dataset.lang;
+            playButton.innerHTML = playButton.getAttribute('data-' + lang + '-play');
+            waveAnimation.classList.remove('active');
+            
+            // Allow screen to dim
+            keepScreenAwake(false);
+            
+            // Reset remaining time display
+            remainingTimeInSeconds = parseInt(durationSlider.value);
+            remainingTime.textContent = remainingTimeInSeconds + 's';
+        }
+        
+        // Update countdown timer
+        function updateRemainingTime() {
+            remainingTimeInSeconds--;
+            remainingTime.textContent = remainingTimeInSeconds + 's';
+            
+            // Auto-stop when time runs out
+            if (remainingTimeInSeconds <= 0) {
+                stopSound();
+            }
+        }
+        
+        // Add vibration feedback for mobile devices
+        function vibrateDevice(duration) {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(duration);
+            }
+        }
+        
+        // Add tactile feedback to buttons
+        playButton.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        playButton.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        
+        stopButton.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        stopButton.addEventListener('touchend', function() {
+            this.style.transform = '';
+        });
+        
+        // Handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && isPlaying) {
+                // Optionally pause when switching away from page
+                // Uncomment the following line if you want to auto-pause when switching apps
+                // stopSound();
+            }
+        });
+        
+        // Handle audio interruptions (e.g., incoming calls on mobile)
+        if ('ondeviceready' in document) {
+            document.addEventListener('pause', function() {
+                if (isPlaying) stopSound();
+            }, false);
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default language
+            setLanguage(currentLang);
+            
+            // Initialize mobile touch handling
+            updateLayoutForOrientation();
+        });
+    </script>
+</body>
+</html>
